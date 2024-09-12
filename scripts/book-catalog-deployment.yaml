@@ -1,0 +1,37 @@
+# Deployment for book-catalog application
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: book-catalog-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: book-catalog
+  template:
+    metadata:
+      labels:
+        app: book-catalog
+    spec:
+      containers:
+      - name: book-catalog
+        image: mitul22/book-catalog:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://s223588983_sit722_part2_user:vwZt3rJNuNAjxx8wtRIUSg7sNWEOAQ1D@dpg-cr7h8grqf0us73bfoqug-a.oregon-postgres.render.com/s223588983_sit722_part2"
+---
+# Service for book-catalog application
+apiVersion: v1
+kind: Service
+metadata:
+  name: book-catalog-service
+spec:
+  selector:
+    app: book-catalog
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: NodePort  # Changed to NodePort for local testing. Use LoadBalancer in production.
